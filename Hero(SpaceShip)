@@ -1,0 +1,142 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+
+import javax.swing.JPanel;
+
+public class Hero 
+{
+	public static boolean getBounds;
+	private int x,y,xMax,yMax;
+	private int w;
+	private int h;
+	private int upKey,downKey,leftKey,rightKey;
+	private boolean up,down,left,right;
+	private Color color;
+	private Image image;
+	public Hero(int x,int y,int w, int h, int upKey,int downKey,int leftKey,int rightKey,int xMax,int yMax,Color color, Image image)
+	{
+		this.y=y;
+		this.x=x;
+		this.w=w;
+		this.h=h;
+		this.upKey=upKey;
+		this.downKey=downKey;
+		this.leftKey=leftKey;
+		this.rightKey=rightKey;
+		this.xMax=xMax;
+		this.yMax=yMax;
+		this.color=color;
+		this.image=image;
+	}
+	public void moveKey()
+	{
+		if(up)
+		{
+			y--;
+		}
+		if(down)
+		{
+			y++;
+		}
+		if(left)
+		{
+			x--;
+		}
+		if(right)
+		{
+			x++;
+		}
+		if(x<=0)
+		{
+			x=0;
+		}
+		if(x>=xMax-30)
+		{
+			x=xMax-30;
+		}
+		if(y<=0)
+		{
+			y=0;
+		}
+		if(y>=yMax-30)
+		{
+			y=yMax-30;
+		}
+		
+			
+	}
+	public void setPressing(int key)
+	{
+		if(key==upKey)
+		{
+			up=true;
+		}
+		if(key==downKey)
+		{
+			down=true;
+		}
+		if(key==leftKey)
+		{
+			left=true;
+		}
+		if(key==rightKey)
+		{
+			right=true;
+		}
+		
+			
+	}
+	public void setReleasing(int key)
+	{
+		if(key==upKey)
+		{
+			up=false;
+		}
+		if(key==downKey)
+		{
+			down=false;
+		}
+		if(key==leftKey)
+		{
+			left=false;
+		}
+		if(key==rightKey)
+		{
+			right=false;
+		}
+	}
+	public Rectangle getBounds()
+	{
+		return new Rectangle(x,y,w,h);
+	}
+	public void draw(Graphics2D g2)
+	{
+		g2.setColor(color);
+		g2.fill(getBounds());
+		g2.setColor(color);
+		g2.draw(getBounds());
+		
+	}
+	public void drawImage(Graphics2D g2,JPanel panel)
+	{
+		g2.drawImage(image,x,y,w,h,panel);
+	}
+	public int getX()
+	{
+		return x;
+	}
+	public int getY()
+	{
+		return y;
+	}
+	public void setY(int y)
+	{
+		this.y=y;
+	}
+	
+}
+
+	
+
