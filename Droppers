@@ -1,0 +1,54 @@
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+
+import javax.swing.JPanel;
+
+public class BadGuy 
+{
+	private int x;
+	private int y;
+	private int w;
+	private int h;
+	private int yMax;
+	private int dy;
+	private Color color;
+	private Image image;
+	
+	public BadGuy(int x,int y,int w,int h,int dy,int yMax,Color color,Image image)
+	{
+		this.x=x;
+		this.y=y;
+		this.w=w;
+		this.h=h;
+		this.yMax=yMax;
+		this.color=color;
+		this.image=image;
+	}
+	public void update()
+	{
+		y+=dy;
+	}
+	public Rectangle getBounds()
+	{
+		return new Rectangle(x,y,w,h);
+	}
+	public void draw(Graphics2D g2)
+	{
+		g2.setColor(color);
+		g2.fill(getBounds());
+		g2.setColor(color);
+		g2.draw(getBounds());
+		
+			
+	}
+	public void drawImage(Graphics2D g2,JPanel panel)
+	{
+		g2.drawImage(image,x,y,w,h,panel);
+	}
+	public void setDy(int dy)
+	{
+		this.dy=dy;
+	}
+}
