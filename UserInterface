@@ -1,0 +1,247 @@
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+public class DodgerGUI extends JPanel implements KeyListener
+{
+	private static final long serialVersionUID=1L;
+	private static final int PREF_W=800;
+	private static final int PREF_H=600;
+	private Timer timer;
+	private Hero Hero;
+	private ArrayList<BadGuy>badGuys;
+	private Image badimg1,goodimg1,badimg,goodimg;
+	private boolean playing,GameOver,reset;
+	private String message,message2,message3;
+	private int score;
+	private int delay;
+	private int numBadGuys;
+	private int health;
+	private int speed;
+	private AudioClip background,gameover;
+	private boolean gameWon;
+	public DodgerGUI()
+	{
+		
+		this.addKeyListener(this);
+		this.setFocusable(true);
+		badimg= new ImageIcon(DodgerGUI.class.getResource("bad.jpeg")).getImage();
+		goodimg= new ImageIcon(DodgerGUI.class.getResource("nicu.png")).getImage();
+		background=Applet.newAudioClip(this.getClass().getResource("Encounter.wav"));
+		gameover=Applet.newAudioClip(this.getClass().getResource("1-18 Mission Failed.wav"));
+		reset();
+		timer=new Timer(3,new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				update();
+				repaint();
+			}
+		});
+		timer.start();
+		timer=new Timer(5,new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				update2();
+				repaint();
+			}
+		});
+		timer.start();
+        
+		
+			
+		
+	}
+	public void reset()
+	{
+		score=0;
+		delay=0;
+		numBadGuys=1000;
+		health=300;
+		Hero=new Hero(400,300,30,30,38,40,37,39,PREF_W,PREF_H,Color.RED,goodimg);
+		badGuys=new ArrayList<BadGuy>();
+		initializeBadGuys(1);
+		speed=5;
+		playing=false;
+		GameOver=false;
+		reset=false;
+		gameWon=false;
+		message="Press SpaceBar to Start";
+		message2="";
+		message3="";
+		System.out.println(badGuys.size());
+		
+		
+	}
+	public void initializeBadGuys(int cols)
+	{
+		for(int t=0;t<numBadGuys;t++)
+		{
+			for(int c=0;c<cols;c++)
+			{
+				int rand=(int)(Math.random()*40+10);
+				badGuys.add(new BadGuy((int)(c*50+Math.random()*800),-60,rand,rand,0,PREF_H,Color.white,badimg));
+				
+			}
+		}
+	}
+	public void update2()
+	{
+		if(playing)
+		Hero.moveKey();
+		
+	}
+	public void update()
+	{
+		if(playing)
+		{
+			score++;
+			delay++;
+			if(delay>10)
+			{
+				int r=(int)(Math.random()*badGuys.size());
+				badGuys.get(r).setDy(1);
+				delay=0;
+			}
+			for(BadGuy b:badGuys)
+			{
+				b.update();
+			}
+			if(GameOver()) 
+			{
+				background.stop();
+				message2="Nice Try Guy";
+				message3="Press R to Restart";		
+			}
+			if(reset==true)
+			{
+				message="Lets go Again";
+			}
+			if(gameWon())
+			{
+				background.stop();
+				message="Gamers Rise Up";
+				message3="Press R to Restart";
+				if(reset==true)
+				{
+					message="Lets Go Again";
+				}
+			}
+			checkCollision();
+		}
+	}
+	public void checkCollision()
+	{
+		for(int i=0;i<badGuys.size();i++)
+		{
+			if(Hero.getBounds().intersects(badGuys.get(i).getBounds()))
+			{
+				health--;
+			}
+		}
+	}
+	public boolean gameWon()
+	{
+		if(score>20000)
+		{
+			playing=false;
+			return true;
+		}
+		return false;
+	}
+	public boolean GameOver()
+	{
+		if(health==0)
+		{
+			playing=false;
+			gameover.play();
+			return true;
+			
+			
+		}
+		return false;
+	}
+	public void paintComponent(Graphics g)
+	{
+		super.paintComponent(g);
+		Graphics2D g2=(Graphics2D)g;
+		g2.setRenderingHints(new RenderingHints(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON));
+		g2.setColor(Color.BLACK);
+		g2.fillRect(0,0,getWidth(),getHeight());
+		g2.setColor(Color.WHITE);
+		g2.setFont(new Font("Arcade Classic",Font.PLAIN,50));
+		Hero.drawImage(g2,this);
+		for(BadGuy b:badGuys)
+		{
+			b.drawImage(g2,this);
+		}
+		g2.drawString(message,140,200);
+		g2.drawString(message2,140,250);
+		g2.drawString(message3,120,300);
+		g2.setFont(new Font("Arcade Classic",Font.PLAIN,20));
+		g2.setColor(Color.white);
+		g2.drawString("Score: "+score,10,20);
+		g2.drawString("Health: "+health,10,40);
+	}
+	public Dimension getPreferredSize()
+	{
+		return new Dimension(PREF_W,PREF_H);
+	}
+	public static void main(String[]args)
+	{
+		JFrame frame=new JFrame("Dodger");
+		DodgerGUI panel=new DodgerGUI();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(panel);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		
+	}
+	public void keyPressed(KeyEvent e)
+	{
+		int key=e.getKeyCode();
+		Hero.setPressing(key);
+		if(key==KeyEvent.VK_SPACE)
+		{
+			background.loop();
+			playing=true;
+			message="";
+			
+		};
+		if(key==KeyEvent.VK_R)
+		{
+			reset();
+			repaint();
+		}
+		
+	}
+	public void keyReleased(KeyEvent e)
+	{
+		int key=e.getKeyCode();
+		Hero.setReleasing(key);
+	}
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+}
