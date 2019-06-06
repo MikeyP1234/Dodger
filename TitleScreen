@@ -1,0 +1,89 @@
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+     
+public class TitleScreen implements ActionListener
+{
+  
+    private Image pic;
+    private Image ti;
+    private JLabel icon;
+    
+    private JFrame frame;
+    private JButton button;
+    private Boolean x=false;
+    private JButton bek;
+   
+    public TitleScreen()  throws Exception
+    {
+    	
+        File file = new File("src/yoa.jpg");
+        File q=new File("src/Dodger.png");
+        Image image = ImageIO.read(file);
+        BufferedImage title= ImageIO.read(q);
+        ti = title.getScaledInstance(500, 200, image.SCALE_DEFAULT);
+        pic = image.getScaledInstance(900, 750, image.SCALE_DEFAULT);
+        JLabel label = new JLabel(new ImageIcon(pic));
+        JFrame f = new JFrame("Dodger!");
+        JButton j=new JButton("Start Game");
+        bek=new JButton(new ImageIcon(ti));
+        
+       
+        icon = label;
+        frame = f;
+        button = j;  
+    }
+   
+    public void createTitleScreen()
+    {
+    	 bek.setBounds(200,100,485,190);
+    	 bek.disable();
+    	 frame.setSize(900, 750);
+         button.setBounds(200,5,200, 50);
+         button.setLocation(350,500);
+         
+         button.addActionListener(new ActionListener(){  
+        	    public void actionPerformed(ActionEvent e){
+        	    	  
+        	          frame.dispose();  
+        	          
+        	    }  
+        	    });  
+         frame.add(bek);
+         frame.add(button);
+         frame.setLocation(500, 200);
+         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+       
+         
+        
+         frame.getContentPane().add(icon);
+       
+         
+         frame.setVisible(true);
+         frame.setResizable(false);
+    }
+
+	@Override
+	public void actionPerformed(ActionEvent e) 
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	public boolean gameStart()
+	{
+		return x;
+	}
+  
+  
+
+
+   
+}
